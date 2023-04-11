@@ -28,9 +28,6 @@ namespace loom
         /// @param config settings to be applied to this interface
         virtual void init(JsonObject config) = 0;
 
-        /// @brief If there are inputs, check with source to see if there are any updates
-        virtual void checkUpdate() = 0;
-
         /// @brief Create a stub of an output in case this interface doesn't require output
         /// To use a full output, overload this function
         /// @param params settings to apply to this output
@@ -43,6 +40,9 @@ namespace loom
         /// @param params settings to apply to the input
         /// @return pointer to the newly created input
         virtual InputChannel* createInput(JsonObject params);
+
+        /// @brief If there are inputs, check with source to see if there are any updates
+        virtual void checkUpdate() = 0;
         
         std::vector<InputChannel*>inputs;   //list of all the inputs connected to this interface
     };

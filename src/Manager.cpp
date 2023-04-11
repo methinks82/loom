@@ -52,9 +52,19 @@ void Manager::loadInterfaces(JsonArray interfaceList)
             // check for each type of interface that is being used
             if(interfaceClass == "SerialInterface")
             {
-                Serial.println(F("Loading serial interface"));
+                Serial.println(F("Loading Serial Interface"));
                 newInterface = new SerialInterface;
             } 
+            if(interfaceClass == "GpioInterface")
+            {
+                Serial.println(F("Loading GPIO Interface"));
+                newInterface = new GpioInterface;
+            }
+            if(interfaceClass == "ScreenInterface")
+            {
+                Serial.println(F("Loading Screen Interface"));
+                newInterface = new ScreenInterface;
+            }
             newInterface->init(i);
             String id = i["id"];
             newInterface->id = id;
@@ -74,15 +84,20 @@ void Manager::loadOutputs(JsonArray outputList)
 
             for(auto i : interfaces)
             {
-                Serial.print("checking ");
-                Serial.println(i->id);
+                String id = outputConfig["id"];
+
+                Serial.print("Loading output ");
+                Serial.print(parent);
+                Serial.print("::");
+                Serial.println(id);
 
                 if(parent.compareTo(i->id) == 0)
                 {
                     OutputChannel* output = i->createOutput(outputConfig);
+                    output->id = id;
                     if(output != nullptr)
                     {
-                    outputs.push_back(output);
+                        outputs.push_back(output);
                     }
                 }
             }
@@ -100,11 +115,18 @@ void Manager::loadInputs(JsonArray inputList)
             String parent = inputConfig["interface"];
 
             for(auto i : interfaces)
-            {
+            {               
+                String id = inputConfig["id"];
+                Serial.print("Loading input ");
+                Serial.print(parent);
+                Serial.print("::");
+                Serial.println(id);
+
                 if(parent.compareTo(i->id) == 0)
                 {
-                    Serial.println("Loading input");
                     InputChannel* input = i->createInput(inputConfig);
+                    input->id = id;
+
                     if(input != nullptr)
                     {
                         linkChannels(input, inputConfig["outputs"]);
@@ -122,9 +144,10 @@ void Manager::linkChannels(InputChannel* input, JsonArray outputList)
     {
         for(OutputChannel* output : outputs)
         {
-            Serial.print(outputId);
-            Serial.print(" = ");
-            Serial.println(output->id);
+            Serial.print("Linking ");
+            Serial.print(input->id);
+            Serial.print(" => ");
+            Serial.println(outputId); 
 
             if(output->id == outputId)
             {

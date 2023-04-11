@@ -12,6 +12,8 @@
 
 using namespace loom;
 
+InputChannel::InputChannel() {}
+
 // add an output that the data will get sent on to
 void InputChannel::registerOutput(OutputChannel* output)
 {

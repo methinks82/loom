@@ -24,8 +24,8 @@ namespace loom
     {
     public:
         //InputChannel(String ) {Serial.println(F("Input Constructor"));}
-        InputChannel() {};
-        InputChannel(const String& id):id(id) {}
+        InputChannel();
+        //InputChannel(const String& id):id(id) {}
 
 
         /// @brief add an output that the data will get sent on to

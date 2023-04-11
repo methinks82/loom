@@ -10,7 +10,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Program started");
 
-  manager.loadConfig(config);
+  manager.loadConfig(jsonConfig);
 }
 
 void loop() {

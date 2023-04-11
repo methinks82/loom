@@ -24,12 +24,12 @@ InputChannel* Interface::createInput(JsonObject params)
 {
     String id = params["id"];
     
-    InputChannel * input = new InputChannel(id);
+    InputChannel * input = new InputChannel;
 
     Serial.print(F("Creating Interface::InputChannel "));
     Serial.println(id);
 
-    input->id = id;
+//    input->id = id;
     inputs.push_back(input);
 
     return input;

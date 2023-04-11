@@ -23,7 +23,7 @@ namespace loom
     class GpioInput: public InputChannel
     {
     public:
-        GpioInput(int pin): pin(pin) {}
+        GpioInput(int pin): pin(pin), lastVal(0) {}
 
         virtual void update(int data)
         {

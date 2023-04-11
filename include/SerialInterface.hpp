@@ -37,7 +37,6 @@ namespace loom
             if(Serial.available() > 0)
             {
                 int data = Serial.read();
-                data += 1; //HACK: for testing only
 
                 // figure out how to sort data to channels.
                 // for now we send to all

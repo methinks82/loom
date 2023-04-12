@@ -34,3 +34,11 @@ InputChannel* Interface::createInput(JsonObject params)
 
     return input;
 }
+
+void Interface::checkUpdate()
+{
+    for(auto i : inputs)
+    {
+        i->update(0);
+    }
+}

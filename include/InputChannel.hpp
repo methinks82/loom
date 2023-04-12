@@ -34,7 +34,7 @@ namespace loom
 
         /// @brief alert this channel that there is new data
         /// @param data data to be processed
-        void update(int data);
+        virtual void update(int data);
 
         /// @brief ID to access this channel for dynamic management
         //char* id;

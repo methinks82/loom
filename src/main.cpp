@@ -7,10 +7,12 @@ using namespace loom;
 Manager manager;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("Program started");
 
   manager.loadConfig(jsonConfig);
+
+  pinMode(12, INPUT);
 }
 
 void loop() {

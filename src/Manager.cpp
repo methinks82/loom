@@ -26,6 +26,8 @@ void Manager::loadConfig(char* config)
     loadInterfaces(doc["interfaces"]);
     loadOutputs(doc["outputs"]);
     loadInputs(doc["inputs"]);
+
+    Serial.println ("Initialization complete");
 }
 
 // Check each Interface to see if it received any updates  
@@ -55,15 +57,19 @@ void Manager::loadInterfaces(JsonArray interfaceList)
                 Serial.println(F("Loading Serial Interface"));
                 newInterface = new SerialInterface;
             } 
-            if(interfaceClass == "GpioInterface")
+            else if(interfaceClass == "GpioInterface")
             {
                 Serial.println(F("Loading GPIO Interface"));
                 newInterface = new GpioInterface;
             }
-            if(interfaceClass == "ScreenInterface")
+            else if(interfaceClass == "ScreenInterface")
             {
                 Serial.println(F("Loading Screen Interface"));
                 newInterface = new ScreenInterface;
+            }
+            else // no valid interface found
+            {
+                return;
             }
             newInterface->init(i);
             String id = i["id"];
@@ -81,16 +87,15 @@ void Manager::loadOutputs(JsonArray outputList)
         for(JsonObject outputConfig : outputList)
         {
             String parent = outputConfig["interface"];
+            String id = outputConfig["id"];
+
+            Serial.print("Loading output ");
+            Serial.print(parent);
+            Serial.print("::");
+            Serial.println(id);
 
             for(auto i : interfaces)
             {
-                String id = outputConfig["id"];
-
-                Serial.print("Loading output ");
-                Serial.print(parent);
-                Serial.print("::");
-                Serial.println(id);
-
                 if(parent.compareTo(i->id) == 0)
                 {
                     OutputChannel* output = i->createOutput(outputConfig);
@@ -113,15 +118,15 @@ void Manager::loadInputs(JsonArray inputList)
         for(JsonObject inputConfig : inputList)
         {
             String parent = inputConfig["interface"];
+            String id = inputConfig["id"];
+
+            Serial.print("Loading input ");
+            Serial.print(parent);
+            Serial.print("::");
+            Serial.println(id);
 
             for(auto i : interfaces)
             {               
-                String id = inputConfig["id"];
-                Serial.print("Loading input ");
-                Serial.print(parent);
-                Serial.print("::");
-                Serial.println(id);
-
                 if(parent.compareTo(i->id) == 0)
                 {
                     InputChannel* input = i->createInput(inputConfig);

@@ -42,7 +42,7 @@ namespace loom
         virtual InputChannel* createInput(JsonObject params);
 
         /// @brief If there are inputs, check with source to see if there are any updates
-        virtual void checkUpdate() = 0;
+        virtual void checkUpdate();
         
         std::vector<InputChannel*>inputs;   //list of all the inputs connected to this interface
     };

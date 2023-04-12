@@ -18,7 +18,7 @@ char jsonConfig[] = "{\"interfaces\":["
 "{\"id\":\"oled\", \"interface\":\"screen\"},"
 "{\"id\":\"led\", \"interface\":\"gpio\", \"pin\":5}"
 "], \"inputs\":["
-"{\"id\":\"rx\", \"interface\":\"serial\", \"outputs\":[\"tx\",\"oled\"]},"
+"{\"id\":\"rx\", \"interface\":\"serial\", \"outputs\":[\"tx\",\"oled\",\"led\"]},"
 "{\"id\":\"btn\", \"interface\":\"gpio\", \"pin\":12, \"outputs\":[\"tx\",\"oled\",\"led\"]}"
 "]}";
 

@@ -7,7 +7,7 @@ using namespace loom;
 Manager manager;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Program started");
 
   manager.loadConfig(jsonConfig);

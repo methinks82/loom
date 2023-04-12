@@ -11,8 +11,6 @@ void setup() {
   Serial.println("Program started");
 
   manager.loadConfig(jsonConfig);
-
-  pinMode(12, INPUT);
 }
 
 void loop() {

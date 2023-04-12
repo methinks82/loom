@@ -15,10 +15,11 @@ char jsonConfig[] = "{\"interfaces\":["
 "{\"class\":\"ScreenInterface\", \"id\":\"screen\"}"
 "], \"outputs\":["
 "{\"id\":\"tx\", \"interface\":\"serial\"},"
-"{\"id\":\"oled\", \"interface\":\"screen\"}"
+"{\"id\":\"oled\", \"interface\":\"screen\"},"
+"{\"id\":\"led\", \"interface\":\"gpio\", \"pin\":5}"
 "], \"inputs\":["
 "{\"id\":\"rx\", \"interface\":\"serial\", \"outputs\":[\"tx\",\"oled\"]},"
-"{\"id\":\"btn\", \"interface\":\"gpio\", \"pin\":12, \"outputs\":[\"tx\",\"oled\"]}"
+"{\"id\":\"btn\", \"interface\":\"gpio\", \"pin\":12, \"outputs\":[\"tx\",\"oled\",\"led\"]}"
 "]}";
 
 char yamlConfig[] = "---\n"

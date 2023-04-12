@@ -6,6 +6,16 @@
 
 namespace loom
 {
+    class GpioOutput: public OutputChannel
+    {
+    public:
+        GpioOutput(int pin);
+        virtual void call(int data);
+
+    private:
+        int pin;
+    };
+
     class GpioInput: public InputChannel
     {
     public:

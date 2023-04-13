@@ -15,8 +15,8 @@
 
 // list all the interfaces that should be used
 #include "SerialInterface.hpp"
-#include "GpioInterface.hpp"
-#include "ScreenInterface.hpp"
+//#include "GpioInterface.hpp"
+//#include "ScreenInterface.hpp"
 
 namespace loom
 {
@@ -38,7 +38,7 @@ namespace loom
 
         /// @brief Create and configure output channels
         /// @param outputList List of all the required output channels and their settings
-        void loadOutputs(JsonArray outputList);
+        void loadOutputs(JsonArray outputList, Interface* interface);
  
         /// @brief Create and configure input channels
         /// @param inputList List of all the required input channels and their settings
@@ -47,9 +47,8 @@ namespace loom
         /// @brief Link an input channel to an output channel
         /// @param input pointer to the input channel
         /// @param outputList list of all outputs to be linked to this input
-        void linkChannels(InputChannel* input, JsonArray outputList);
+        //void linkChannels(InputChannel* input, JsonArray outputList);
    
-
         std::vector<Interface*> interfaces;
         std::vector<OutputChannel*> outputs;
     };

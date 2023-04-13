@@ -10,6 +10,8 @@
 #ifndef LOOM_SERIAL_INTERFACE_HPP
 #define LOOM_SERIAL_INTERFACE_HPP
 
+#include <vector>
+
 #include "Interface.hpp"
 
 namespace loom
@@ -31,22 +33,6 @@ namespace loom
             Serial.println(msg);
         }
 
-        virtual void checkUpdate()
-        {
-            //Check if there's anything in the serial buffer
-            if(Serial.available() > 0)
-            {
-                int data = Serial.read();
-
-                // figure out how to sort data to channels.
-                // for now we send to all
-                for(auto i: inputs)
-                {
-                    i->update(data);
-                }
-            }
-        }
-
         virtual OutputChannel* createOutput(JsonObject params) override
         {
 
@@ -59,7 +45,41 @@ namespace loom
 
             return output;
         }
+
+        virtual void createInput(JsonObject params)
+        {
+
+        }
+
+        virtual void linkChannels(const String inputId, OutputChannel* targetOutput)
+        {
+            Serial.print(F("Linking "));
+            Serial.print(inputId);
+            Serial.print(" => ");
+            Serial.println(targetOutput->id);
+            outputs.push_back(targetOutput);
+        }
+
+        virtual void checkUpdate()
+        {
+            //Check if there's anything in the serial buffer
+            if(Serial.available() > 0)
+            {
+                int data = Serial.read();
+
+                // for now we only have one channel
+
+                for(auto output: outputs)
+                {
+                    output->call(data);
+                }
+            }
+        }
+
+
+    private:
+        std::vector<OutputChannel*> outputs;
     };
-} // namespace loom
+}
 
 #endif

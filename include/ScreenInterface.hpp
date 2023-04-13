@@ -19,6 +19,8 @@ namespace loom
 
         OutputChannel* createOutput(JsonObject params) override;
 
+        void CreateInput(JsonObject params) {} // stub, not used
+
         // no inputs, not used
         virtual void checkUpdate();
     };

@@ -10,11 +10,10 @@
 #ifndef LOOM_INTERFACE_HPP
 #define LOOM_INTERFACE_HPP
 
-#include <vector>
+//#include <vector>
 #include <ArduinoJson.h>
 #include "OutputChannel.hpp"
-#include "InputChannel.hpp"
-#include <string.h>
+//#include <string.h>
 
 namespace loom
 {
@@ -33,18 +32,17 @@ namespace loom
         /// @param params settings to apply to this output
         /// @return nullptr
         /// @return pointer to new output if using an overloaded function 
-        virtual OutputChannel* createOutput(JsonObject params);
+        virtual OutputChannel* createOutput(JsonObject params) = 0;
 
         /// @brief Creates a generic input channel
         /// Override to use custom input channels
         /// @param params settings to apply to the input
-        /// @return pointer to the newly created input
-        virtual InputChannel* createInput(JsonObject params);
+        virtual void createInput(JsonObject params) = 0;
+
+        virtual void linkChannels(const String inputId, OutputChannel* targetOutput) = 0;
 
         /// @brief If there are inputs, check with source to see if there are any updates
-        virtual void checkUpdate();
-        
-        std::vector<InputChannel*>inputs;   //list of all the inputs connected to this interface
+        virtual void checkUpdate() = 0;
     };
 }
 

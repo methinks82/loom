@@ -10,6 +10,7 @@
 #ifndef LOOM_GPIO_INTERFACE_HPP
 #define LOOM_GPIO_INTERFACE_HPP
 
+#include <vector>
 #include <Arduino.h>
 #include "Interface.hpp"
 
@@ -32,11 +33,11 @@ namespace loom
     };
 
     // TODO: Input class will be removed
-    class GpioInput: public InputChannel
+    class GpioInput
     {
     public:
         GpioInput(int pin);
-        virtual void update(int data);
+        void update(int data);
 
     private:
         int pin;
@@ -59,7 +60,10 @@ namespace loom
         /// @brief create an input that reads from gpio pin
         /// @param param Setting to apply to the input (pin number)
         /// @return pointer to the new input
-        virtual InputChannel* createInput(JsonObject param) override;
+        virtual void createInput(JsonObject param) override;
+
+    private:
+        std::vector<GpioInput*> inputs; // replace with array. You can find size at runtime
     };
 }
 

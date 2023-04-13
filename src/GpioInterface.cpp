@@ -27,7 +27,8 @@ void GpioInput::update(int data)
     {
         lastVal = currentVal;
         delay(50); // debounce
-        InputChannel::update(currentVal);
+        //InputChannel::update(currentVal);
+        //TODO: update all listeners
     }
 }
 
@@ -45,11 +46,10 @@ OutputChannel* GpioInterface::createOutput(JsonObject params)
 }
 
 // create an input that reads from gpio pin
-InputChannel* GpioInterface::createInput(JsonObject params)
+void GpioInterface::createInput(JsonObject params)
 {
     int pin = params["pin"];
     pinMode(pin, INPUT);
     GpioInput* input = new GpioInput(pin);
     inputs.push_back(input);
-    return input;
 }

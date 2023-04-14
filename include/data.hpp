@@ -9,12 +9,20 @@
 */
 
 
+
+
+
 char jsonConfig[] = 
 "{\"interfaces\":["
     "{\"class\":\"SerialInterface\", \"id\":\"serial\", \"msg\":\"foo\", \"outputs\":[" 
         "{\"id\":\"tx\"}"
     "],\"inputs\":["
-        "{\"id\":\"rx\", \"outputs\":[\"tx\"]}"
+        "{\"id\":\"rx\", \"outputs\":[\"tx\",\"led\"]}"
+    "]},"
+    "{\"class\":\"GpioInterface\", \"id\":\"gpio\", \"outputs\":["
+        "{\"id\":\"led\", \"pin\":5}"
+    "],\"inputs\":["
+        "{\"id\":\"btn\", \"pin\":12,\"outputs\":[\"tx\",\"led\"]}"
     "]}"
 "]}";
 
@@ -29,3 +37,14 @@ char yamlConfig[] = "---\n"
 "  - id:rx"
 "    outputs[tx]"
 ;
+
+/*
+char jsonConfig[] = 
+"{\"interfaces\":["
+    "{\"class\":\"SerialInterface\", \"id\":\"serial\", \"msg\":\"foo\", \"outputs\":[" 
+        "{\"id\":\"tx\"}"
+    "],\"inputs\":["
+        "{\"id\":\"rx\", \"outputs\":[\"tx\"]}"
+    "]}"
+"]}";
+*/

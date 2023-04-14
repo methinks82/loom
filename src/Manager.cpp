@@ -68,12 +68,11 @@ void Manager::loadInterfaces(JsonArray interfaceList)
             Serial.println(F("Loading Serial Interface"));
             newInterface = new SerialInterface;
         } 
-        /*
         else if(interfaceClass == "GpioInterface")
         {
             Serial.println(F("Loading GPIO Interface"));
             newInterface = new GpioInterface;
-        }
+        }/*
         else if(interfaceClass == "ScreenInterface")
         {
             Serial.println(F("Loading Screen Interface"));
@@ -143,74 +142,31 @@ void Manager::loadInputs(JsonArray interfaceList)
                     Serial.println(listenerList.size());
 
                     // cycle through each listener in the list
-                    for(String listenerId: listenerList)
-                    {
-                        // find the matching output instance
-                        for(OutputChannel* output : outputs)
-                        {
-                            if(output->id == listenerId)
-                            {
-                                // once we find the instance, we link it to the input
-                                interface->linkChannels(inputId, output);
-                            }
-                        }
-                    }
-
+                    createLinks(interface, inputInfo);
                 }
                 break;
             }
         }
     }
-
-        /*
-
-        for(JsonObject input: inputs)
-        {
-            interface.
-        }
-    }
-
-    if(!inputList.isNull())
-    {
-        for(JsonObject inputConfig : inputList)
-        {
-            String parent = inputConfig["interface"];
-            String id = inputConfig["id"];
-
-            Serial.print("Loading input ");
-            Serial.print(parent);
-            Serial.print("::");
-            Serial.println(id);
-
-            for(auto i : interfaces)
-            {               
-                if(parent.compareTo(i->id) == 0)
-                {
-                    i->createInput(inputConfig);
-                }
-            }
-        }
-    }*/
 }
 
-/*
-// Link an input channel to an output channel
-void Manager::linkChannels(InputChannel* input, JsonArray outputList)
+void Manager::createLinks(Interface* interface, JsonObject inputInfo)
 {
+    // for each output
+    String inputId = inputInfo["id"];
+    JsonArray outputList = inputInfo["outputs"];
+
     for(String outputId : outputList)
     {
+        Serial.println(outputId);
+        //find the instance
         for(OutputChannel* output : outputs)
         {
-            Serial.print("Linking ");
-            Serial.print(input->id);
-            Serial.print(" => ");
-            Serial.println(outputId); 
-
-            if(output->id == outputId)
+            if(output->id == outputId) // we've found the correct output
             {
-                Serial.println("Linked");
-                input->registerOutput(output);
+                Serial.println("Linking");
+                interface->linkChannels(inputId, output);
             }
         }
     }
-}*/
+}

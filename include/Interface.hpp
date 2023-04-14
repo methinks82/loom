@@ -39,7 +39,7 @@ namespace loom
         /// @param params settings to apply to the input
         virtual void createInput(JsonObject params) = 0;
 
-        virtual void linkChannels(const String inputId, OutputChannel* targetOutput) = 0;
+        virtual void linkChannels(const String& inputId, OutputChannel* targetOutput) = 0;
 
         /// @brief If there are inputs, check with source to see if there are any updates
         virtual void checkUpdate() = 0;

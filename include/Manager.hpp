@@ -14,10 +14,12 @@
 #include <vector>
 #include "logging.h"
 
+#include <U8x8lib.h> //HACK: debugging
+
 // list all the interfaces that should be used
 #include "SerialInterface.hpp"
 #include "GpioInterface.hpp"
-#include "ScreenInterface.hpp"
+//#include "ScreenInterface.hpp"
 
 namespace loom
 {
@@ -25,14 +27,21 @@ namespace loom
     {
     public:
 
+        void setup(const String& config);
+
+        bool updateConfig(String& config);
+
         /// @brief Initialize and configure Interfaces and channels from configuration file
         /// @param config String containing the configuration
-        void loadConfig(char* config);
+        void loadConfig(String& config, const String& source);
         
         /// @brief Check each Interface to see if it received any updates
-        void checkUpdates();
+        void mainLoop();
 
     private:
+
+        void requestUpdates();
+
         /// @brief Load and configure the required Interfaces
         /// @param interfaceList List of all the required Interfaces and their settings
         void loadInterfaces(JsonArray interfaceList);
@@ -54,6 +63,7 @@ namespace loom
    
         std::vector<Interface*> interfaces;
         std::vector<OutputChannel*> outputs;
+
     };
 }
 

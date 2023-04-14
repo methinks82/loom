@@ -11,7 +11,7 @@
 
 char jsonConfig[] = 
 "{\"interfaces\":["
-    "{\"class\":\"SerialInterface\", \"id\":\"serial\", \"msg\":\"foo\", \"outputs\":[" 
+    "{\"class\":\"SerialInterface\", \"id\":\"serial\",\"outputs\":[" 
         "{\"id\":\"tx\"}"
     "],\"inputs\":["
         "{\"id\":\"rx\", \"outputs\":[\"tx\",\"led\",\"oled\"]}"

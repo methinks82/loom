@@ -13,12 +13,10 @@ void setup() {
   Serial.begin(115200);
   LOG("Program started");
 
-  manager.loadConfig(jsonConfig);
+  //manager.loadConfig(jsonConfig);
+  manager.setup(jsonConfig);
 }
 
 void loop() {
-
-
-
-  manager.checkUpdates();
+  manager.mainLoop();
 }

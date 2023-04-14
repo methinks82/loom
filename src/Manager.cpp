@@ -9,13 +9,24 @@
 
 #include "Manager.hpp"
 
+U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(15, 4, 16); // HACK: Debugging
+
 using namespace loom;
 
+
 // Initialize and configure Interfaces and channels from configuration file
-void Manager::loadConfig(char* config)
+void Manager::setup(const String& config)
 {
+    String configString;
+
+    // HACK: Debugging
+    if(!updateConfig(configString))
+    {
+        loadConfig(configString,config);
+    }
+
     StaticJsonDocument<800> doc;
-    DeserializationError error = deserializeJson(doc, config);
+    DeserializationError error = deserializeJson(doc, configString);
     if(error)
     { 
         LOG(F("Unable to load config: "));
@@ -31,13 +42,50 @@ void Manager::loadConfig(char* config)
     LOG(F("\n---\nInitialization complete"));
 }
 
+
+
+bool Manager::updateConfig(String& config)
+{
+    u8x8.begin();
+    u8x8.setFont(u8x8_font_chroma48medium8_r);
+    u8x8.drawString(0,0, "Reading config");    
+
+    Serial.println("Update");
+    delay(200); // wait for reply
+    if(Serial.available() > 0) // there is a response
+    {
+        String response = Serial.readString();
+        response.trim();
+
+        u8x8.clear();
+        u8x8.drawString(0,0, response.c_str());
+        // update the config
+        config = response;
+
+        return true;
+    }
+    return false;
+}
+
+
+void Manager::loadConfig(String& config, const String& source)
+{
+    config = source;
+}
+
+
 // Check each Interface to see if it received any updates  
-void Manager::checkUpdates()
+void Manager::mainLoop()
 {
     for(auto i : interfaces)
     {
         i->checkUpdate();
     }
+}
+
+void Manager::requestUpdates()
+{
+    
 }
 
 // Load and configure the required Interfaces
@@ -69,14 +117,16 @@ void Manager::loadInterfaces(JsonArray interfaceList)
             LOG(F("Loading GPIO Interface"));
             newInterface = new GpioInterface;
         }
+        /*
         else if(interfaceClass == "ScreenInterface")
         {
             LOG(F("Loading Screen Interface"));
             newInterface = new ScreenInterface;
-        }
+        }*/
         else // no valid interface found
         {
-            return;
+            LOG("Unknown interface: ");
+            LOGA(interfaceClass);
         }
         newInterface->init(i);
         newInterface->id = id;

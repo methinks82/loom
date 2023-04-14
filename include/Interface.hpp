@@ -10,10 +10,8 @@
 #ifndef LOOM_INTERFACE_HPP
 #define LOOM_INTERFACE_HPP
 
-//#include <vector>
 #include <ArduinoJson.h>
 #include "OutputChannel.hpp"
-//#include <string.h>
 
 namespace loom
 {
@@ -27,15 +25,13 @@ namespace loom
         /// @param config settings to be applied to this interface
         virtual void init(JsonObject config) = 0;
 
-        /// @brief Create a stub of an output in case this interface doesn't require output
-        /// To use a full output, overload this function
+        /// @brief Create an output channel appropriate to the Interface type
         /// @param params settings to apply to this output
-        /// @return nullptr
-        /// @return pointer to new output if using an overloaded function 
+        /// @return pointer to new output if needed
+        /// @return nullptr if this interface has no outputs
         virtual OutputChannel* createOutput(JsonObject params) = 0;
 
         /// @brief Creates a generic input channel
-        /// Override to use custom input channels
         /// @param params settings to apply to the input
         virtual void createInput(JsonObject params) = 0;
 

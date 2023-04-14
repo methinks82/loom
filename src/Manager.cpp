@@ -18,21 +18,17 @@ void Manager::loadConfig(char* config)
     DeserializationError error = deserializeJson(doc, config);
     if(error)
     { 
-        Serial.print(F("Unable to load config: "));
+        LOG(F("Unable to load config: "));
         Serial.println(error.f_str());
         return;
     }
 
     JsonArray interfaces = doc["interfaces"];
 
-    Serial.print(interfaces.size());
-    Serial.println(" interfaces found");
-
     loadInterfaces(doc["interfaces"]);
-    //loadOutputs(doc["outputs"]); // now get created with interface
     loadInputs(doc["interfaces"]);
 
-    Serial.println ("Initialization complete");
+    LOG(F("\n---\nInitialization complete"));
 }
 
 // Check each Interface to see if it received any updates  
@@ -52,11 +48,11 @@ void Manager::loadInterfaces(JsonArray interfaceList)
         String id = i["id"];
         String interfaceClass = i["class"];
 
-        Serial.print("Interface <");
-        Serial.print(interfaceClass);
-        Serial.print("> ");
-        Serial.println(id);
-        Serial.println("--------");
+        LOG(F("\nInterface <"));
+        LOGA(interfaceClass);
+        LOGA(F("> "));
+        LOGA(id);
+        LOG("--------");
 
         Interface * newInterface;
 
@@ -65,17 +61,17 @@ void Manager::loadInterfaces(JsonArray interfaceList)
         // check for each type of interface that is being used
         if(interfaceClass == "SerialInterface")
         {
-            Serial.println(F("Loading Serial Interface"));
+            LOG(F("Loading Serial Interface"));
             newInterface = new SerialInterface;
         } 
         else if(interfaceClass == "GpioInterface")
         {
-            Serial.println(F("Loading GPIO Interface"));
+            LOG(F("Loading GPIO Interface"));
             newInterface = new GpioInterface;
         }/*
         else if(interfaceClass == "ScreenInterface")
         {
-            Serial.println(F("Loading Screen Interface"));
+            LOG(F("Loading Screen Interface"));
             newInterface = new ScreenInterface;
         }*/
         else // no valid interface found
@@ -97,8 +93,8 @@ void Manager::loadOutputs(JsonArray outputList, Interface* interface)
     {
         String id = outputConfig["id"];
 
-        Serial.print(" Output ");
-        Serial.println(id);
+        LOG("- Output ");
+        LOGA(id);
 
         OutputChannel * output = interface->createOutput(outputConfig);
         if(output != nullptr)
@@ -116,30 +112,28 @@ void Manager::loadInputs(JsonArray interfaceList)
     for(JsonObject interfaceInfo : interfaceList)
     {
         String interfaceId = interfaceInfo["id"];
-        Serial.print(F("Checking interface "));
-        Serial.print(interfaceId);
-        Serial.println(F(" for inputs"));
+        LOG(F("\nInputs from "));
+        LOGA(interfaceId);
+        LOG(F("-------"));
 
         // find the matching interface object
         for(Interface* interface : interfaces)
         {
             if(interface->id == interfaceId)
             {
-                Serial.println("Instance found");
-
                 // create each input
                 JsonArray inputs = interfaceInfo["inputs"];
                 for(JsonObject inputInfo : inputs)
                 {
                     String inputId = inputInfo["id"];
-                    Serial.print("Found input ");
-                    Serial.println(inputId);
+                    LOG(inputId);
                     interface->createInput(inputInfo);
 
                     // once th input is created, we link it to any listening outputs
                     JsonArray listenerList = inputInfo["outputs"];
-                    Serial.print(F("Listeners found: "));
-                    Serial.println(listenerList.size());
+                    LOGA(F(" ("));
+                    LOGA(listenerList.size());
+                    LOGA(F(" listeners)"));
 
                     // cycle through each listener in the list
                     createLinks(interface, inputInfo);
@@ -158,13 +152,13 @@ void Manager::createLinks(Interface* interface, JsonObject inputInfo)
 
     for(String outputId : outputList)
     {
-        Serial.println(outputId);
+        LOG(F("- "));
+        LOGA(outputId);
         //find the instance
         for(OutputChannel* output : outputs)
         {
             if(output->id == outputId) // we've found the correct output
             {
-                Serial.println("Linking");
                 interface->linkChannels(inputId, output);
             }
         }

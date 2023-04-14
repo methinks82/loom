@@ -35,8 +35,6 @@ namespace loom
         /// @param config string containing settings
         virtual void init(JsonObject config) override
         {
-            String msg = config["msg"];
-            Serial.println(msg);
         }
 
         /// @brief Create an OutputChannel that sends data to serial port

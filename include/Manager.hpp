@@ -12,6 +12,7 @@
 
 #include <ArduinoJson.h>
 #include <vector>
+#include "logging.h"
 
 // list all the interfaces that should be used
 #include "SerialInterface.hpp"

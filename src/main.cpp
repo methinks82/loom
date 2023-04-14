@@ -1,14 +1,17 @@
 #include <Arduino.h>
 #include "Manager.hpp"
 #include "data.hpp"
+#include "logging.h"
 
 using namespace loom;
+
+
 
 Manager manager;
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("Program started");
+  LOG("Program started");
 
   manager.loadConfig(jsonConfig);
 }

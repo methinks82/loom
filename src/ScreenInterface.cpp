@@ -9,7 +9,7 @@
  * @date 2023-04-08
 */
 
-/*
+
 #include "ScreenInterface.hpp"
 
 U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(15, 4, 16); // configure screen
@@ -40,4 +40,3 @@ OutputChannel* ScreenInterface::createOutput(JsonObject params)
     ScreenOutput* output = new ScreenOutput;
     return output;
 }
-*/

@@ -14,12 +14,10 @@
 #include <vector>
 #include "logging.h"
 
-#include <U8x8lib.h> //HACK: debugging
-
 // list all the interfaces that should be used
 #include "SerialInterface.hpp"
 #include "GpioInterface.hpp"
-//#include "ScreenInterface.hpp"
+#include "ScreenInterface.hpp"
 
 namespace loom
 {

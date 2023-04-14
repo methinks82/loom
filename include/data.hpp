@@ -9,20 +9,20 @@
 */
 
 
-
-
-
 char jsonConfig[] = 
 "{\"interfaces\":["
     "{\"class\":\"SerialInterface\", \"id\":\"serial\", \"msg\":\"foo\", \"outputs\":[" 
         "{\"id\":\"tx\"}"
     "],\"inputs\":["
-        "{\"id\":\"rx\", \"outputs\":[\"tx\",\"led\"]}"
+        "{\"id\":\"rx\", \"outputs\":[\"tx\",\"led\",\"oled\"]}"
     "]},"
     "{\"class\":\"GpioInterface\", \"id\":\"gpio\", \"outputs\":["
         "{\"id\":\"led\", \"pin\":5}"
     "],\"inputs\":["
         "{\"id\":\"btn\", \"pin\":12,\"outputs\":[\"tx\",\"led\"]}"
+    "]},"
+    "{\"class\":\"ScreenInterface\", \"id\":\"screen\", \"outputs\":["
+        "{\"id\":\"oled\"}"
     "]}"
 "]}";
 

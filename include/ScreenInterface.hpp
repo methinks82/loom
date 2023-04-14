@@ -17,8 +17,11 @@
 
 namespace loom
 {
+    /// @brief OutputChannel to send data to screen
     class ScreenOutput : public OutputChannel
     {
+        /// @brief Send data to screen
+        /// @param data Message to be displayed on screen
         virtual void call(int data) override;
     };
 
@@ -31,14 +34,21 @@ namespace loom
         virtual void init(JsonObject config);
 
         /// @brief create a channel that will output to the screen
-        /// @param params 
+        /// @param params settings to be applied to the output channel
         /// @return pointer to the newly created ScreenOutput
-        OutputChannel* createOutput(JsonObject params) override;
+        virtual OutputChannel* createOutput(JsonObject params) override;
 
-        void CreateInput(JsonObject params) {} // stub, not used
+        /// @brief STUB: Screen does not have inputs, this is not used
+        /// @param params Settings for inputs, not used
+        virtual void createInput(JsonObject params) {}
 
-        // no inputs, not used
-        virtual void checkUpdate();
+        /// @brief STUB:
+        /// @param  
+        /// @param  
+        virtual void linkChannels(const String&, OutputChannel*) {}
+
+        /// @brief STUB:
+        virtual void checkUpdate() {}
     };
 }
 

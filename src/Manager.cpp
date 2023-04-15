@@ -11,58 +11,16 @@
 
 using namespace loom;
 
-// Initialize and configure Interfaces and channels from configuration file
-void Manager::setup(const String& config)
+// Get configuration and set up interfaces and channels accordingly
+void Manager::setup(const String& defaultConfig)
 {
-    String configString;
-
-    if(!updateConfig(configString))
+    if(!loadNewConfig()) // if no update was found
     {
-        loadConfig(configString,config);
+        useExistingConfig(defaultConfig); // use the existing config
     }
-
-    StaticJsonDocument<800> doc;
-    DeserializationError error = deserializeJson(doc, configString);
-    if(error)
-    { 
-        LOG(F("Unable to load config: "));
-        Serial.println(error.f_str());
-        return;
-    }
-
-    JsonArray interfaces = doc["interfaces"];
-
-    loadInterfaces(doc["interfaces"]);
-    loadInputs(doc["interfaces"]);
 
     LOG(F("\n---\nInitialization complete"));
 }
-
-
-
-bool Manager::updateConfig(String& config)
-{
-    Serial.println("Update");
-    delay(200); // wait for reply
-    if(Serial.available() > 0) // there is a response
-    {
-        String response = Serial.readString();
-        response.trim();
-
-        // update the config
-        config = response;
-
-        return true;
-    }
-    return false;
-}
-
-
-void Manager::loadConfig(String& config, const String& source)
-{
-    config = source;
-}
-
 
 // Check each Interface to see if it received any updates  
 void Manager::mainLoop()
@@ -73,10 +31,60 @@ void Manager::mainLoop()
     }
 }
 
-void Manager::requestUpdates()
+// Check if there is a new configuration available, load if so
+bool Manager::loadNewConfig()
 {
-    
+    Serial.println("Update");
+    delay(200); // wait for reply
+    if(Serial.available() > 0) // there is a response
+    {
+        String response = Serial.readString();
+        response.trim();
+
+        // update the config
+        //config = response;
+
+        // if valid config AND the user asked to save
+        if(parseConfig(response)) 
+        {
+            // save the config
+        }
+        return true;
+    }
+    return false;
 }
+
+// Initialize and configure Interfaces and channels from saved configuration file
+void Manager::useExistingConfig(const String& config)
+{
+    parseConfig(config);
+}
+
+// Create and configure interfaces and channels as per given string
+bool Manager::parseConfig(const String& config)
+{
+    StaticJsonDocument<800> doc;
+    DeserializationError error = deserializeJson(doc, config);
+    if(error)
+    { 
+        LOG(F("Unable to load config: "));
+        Serial.println(error.f_str());
+        return false;
+    }
+
+    JsonArray interfaces = doc["interfaces"];
+
+    loadInterfaces(doc["interfaces"]);
+    loadInputs(doc["interfaces"]);
+    return true;
+}
+
+// Write the given config to eeprom for future use
+void Manager::saveConfig(const String& config)
+{
+    // write to eeprom
+}
+
 
 // Load and configure the required Interfaces
 void Manager::loadInterfaces(JsonArray interfaceList)
@@ -183,6 +191,7 @@ void Manager::loadInputs(JsonArray interfaceList)
     }
 }
 
+// Link all inputs from given interface to required outputs
 void Manager::createLinks(Interface* interface, JsonObject inputInfo)
 {
     // for each output

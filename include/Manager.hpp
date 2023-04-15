@@ -12,6 +12,7 @@
 
 #include <ArduinoJson.h>
 #include <vector>
+#include <EEPROM.h>
 #include "logging.h"
 
 // list all the interfaces that should be used
@@ -24,21 +25,30 @@ namespace loom
     class Manager
     {
     public:
+        /// @brief Get configuration and set up interfaces and channels accordingly
+        /// @param config string containing the default config
+        void setup(const String& defaultConfig);
 
-        void setup(const String& config);
-
-        bool updateConfig(String& config);
-
-        /// @brief Initialize and configure Interfaces and channels from configuration file
-        /// @param config String containing the configuration
-        void loadConfig(String& config, const String& source);
-        
         /// @brief Check each Interface to see if it received any updates
         void mainLoop();
 
     private:
+        /// @brief Check if there is a new configuration available, load if so
+        /// @return was a new configuration loaded
+        bool loadNewConfig();
 
-        void requestUpdates();
+        /// @brief Initialize and configure Interfaces and channels from saved configuration file
+        /// @param config String containing the configuration
+        void useExistingConfig(const String& config);
+
+        /// @brief Create and configure interfaces and channels as per given string
+        /// @param config string containing settings
+        /// @return was the configuration successful
+        bool parseConfig(const String& config);
+
+        /// @brief Write the given config to eeprom for future use
+        /// @param config string to be saved
+        void saveConfig(const String& config);
 
         /// @brief Load and configure the required Interfaces
         /// @param interfaceList List of all the required Interfaces and their settings
@@ -52,11 +62,9 @@ namespace loom
         /// @param inputList List of all the required input channels and their settings
         void loadInputs(JsonArray inputList);
 
-        /// @brief Link an input channel to an output channel
+        /// @brief Link all inputs from given interface to required outputs
         /// @param input pointer to the input channel
         /// @param outputList list of all outputs to be linked to this input
-        //void linkChannels(InputChannel* input, JsonArray outputList);
-
         void createLinks(Interface* interface, JsonObject inputInfo);
    
         std::vector<Interface*> interfaces;

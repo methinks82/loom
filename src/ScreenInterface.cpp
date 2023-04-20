@@ -9,7 +9,6 @@
  * @date 2023-04-08
 */
 
-/*
 
 #include "ScreenInterface.hpp"
 
@@ -41,4 +40,3 @@ OutputChannel* ScreenInterface::createOutput(JsonObject params)
     ScreenOutput* output = new ScreenOutput;
     return output;
 }
-*/

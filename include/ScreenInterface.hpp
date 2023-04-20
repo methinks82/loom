@@ -11,7 +11,7 @@
 
 #ifndef LOOM_SCREEN_INTERFACE_HPP
 #define LOOM_SCREEN_INTERFACE_HPP
-/*
+
 #include <U8x8lib.h>
 #include "Interface.hpp"
 
@@ -51,5 +51,5 @@ namespace loom
         virtual void checkUpdate() {}
     };
 }
-*/
+
 #endif

@@ -140,12 +140,11 @@ void Manager::loadInterfaces(JsonArray interfaceList)
             LOG(F("Loading GPIO Interface"));
             newInterface = new GpioInterface;
         }
-        /*
         else if(interfaceClass == "ScreenInterface")
         {
             LOG(F("Loading Screen Interface"));
             newInterface = new ScreenInterface;
-        }*/
+        }
         else // no valid interface found
         {
             LOG("Unknown interface: ");

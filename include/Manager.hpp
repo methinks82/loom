@@ -18,7 +18,7 @@
 // list all the interfaces that should be used
 #include "SerialInterface.hpp"
 #include "GpioInterface.hpp"
-//#include "ScreenInterface.hpp"
+#include "ScreenInterface.hpp"
 
 namespace loom
 {

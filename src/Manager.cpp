@@ -9,151 +9,81 @@
 
 #include "Manager.hpp"
 
-U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(15, 4, 16); // configure screen
-
-
 using namespace loom;
 
 // Get configuration and set up interfaces and channels accordingly
 void Manager::setup()
 {
-    u8x8.begin();
-    u8x8.setFont(u8x8_font_chroma48medium8_r);
-    u8x8.drawString(0,0,"Waiting");
     loadConfig();
 }
 
 // Check each Interface to see if it received any updates  
 void Manager::mainLoop()
 {
-    LOGA("*");
-    delay(500);
-    /*
     for(auto i : interfaces)
     {
         i->checkUpdate();
     }
-    */
 }
 
+// get the valid coniguration file and set up the program accordingly
 void Manager::loadConfig()
 {
-  const int BUFFER_SIZE = 500;
-  EEPROM.begin(BUFFER_SIZE);
+    EEPROM.begin(BLOCK_SIZE);
 
-  String config;
-  if(!getConfigUpdate(config))
-  {
-    if(!loadLocalConfig(config))
+    String config;
+    if(!getConfigUpdate(config))
     {
-      u8x8.drawString(0,0,"config not found");
-      LOG("Config not found");
+        if(!loadLocalConfig(config))
+        {
+        LOG("Config not found");
+        }
     }
-  }
-  parseConfig(config);
+    // TODO: change condition to parse config
+    parseConfig(config);
 }
 
-
+// Check if there is a new configuration available, load if so
 bool Manager::getConfigUpdate(String& config)
 {  
-  const char REQUEST_STRING[] = "CFG";
-  
-  Serial.println(); // make sure our request is on it's own line
-  Serial.println(REQUEST_STRING);
-  delay(500); // give host a chance to respond
-  if( Serial.available() > 0) // host sent response
-  {
-    // get data from host
-    String rx = Serial.readString();
-    Serial.println(rx);
-    config = rx;
-
-    // save config to non-volotile memory
-    writeMemory(config);
-
-    u8x8.clear();
-    u8x8.drawString(0,0,"RX:");
-    u8x8.drawString(0,1, rx.c_str());
-
-    return true;
-  }
-  return false;
-}
-
-
-bool Manager::loadLocalConfig(String& config)
-{
-  u8x8.clear();
-  u8x8.drawString(0,0,"Loading local string");
-  
-  config = EEPROM.readString(CFG_ADDRESS);
-
-  u8x8.drawString(0,1, config.c_str());
-    if(config.length() == 0) // empty string, not loaded
+    const char REQUEST_STRING[] = "CFG";
+    
+    Serial.println(); // make sure our request is on it's own line
+    Serial.println(REQUEST_STRING);
+    delay(500); // give host a chance to respond
+    if( Serial.available() > 0) // host sent response
     {
-        return false;
-    }
-  return true;
-}
+        // get data from host
+        String rx = Serial.readString();
+        Serial.println(rx);
+        config = rx;
 
+        // save config to non-volotile memory
+        writeMemory(config);
 
-void Manager::parseConfig(String& config)
-{
-  u8x8.clear();
-  u8x8.drawString(0,0,"Parsing config:");
-  u8x8.drawString(0,1, config.c_str());
-}
-
-
-bool Manager::writeMemory(const String& data)
-{
-  EEPROM.writeString(CFG_ADDRESS, data);
-  EEPROM.commit();
-
-  return true;
-}
-
-
-
-
-
-
-
-/*
-// Check if there is a new configuration available, load if so
-bool Manager::loadNewConfig()
-{
-    Serial.println("\nCFG");
-    delay(500); // wait for reply
-
-    // if there is a response
-    if(Serial.available() > 0)
-    {
-        String response = Serial.readString();
-        response.trim();
-        Serial.print("New config: ");
-        Serial.println(response);
-
-        // save without checking validity
-        saveConfig(response);
-
-        // if valid config AND the user asked to save
-        if(parseConfig(response)) // TODO: check if the user requested save
-        {
-            //saveConfig(response);
-        }
         return true;
     }
     return false;
 }
 
-// Initialize and configure Interfaces and channels from saved configuration file
-void Manager::useExistingConfig()
+// read the configuration file that is stored in memory
+bool Manager::loadLocalConfig(String& config)
+{ 
+    config = EEPROM.readString(CONFIG_ADDRESS);
+    if(config.length() == 0) // empty string, not loaded
+    {
+        return false;
+    }
+    return true;
+}
+
+// Write the given config to eeprom for future use
+bool Manager::writeMemory(const String& data)
 {
-    String loadedConfig = EEPROM.readString(CONFIG_ADDRESS);
-    LOG("Last config: ");
-    LOGA(loadedConfig);
-    parseConfig(loadedConfig);
+    EEPROM.writeString(CONFIG_ADDRESS, data);
+    EEPROM.commit();
+
+    return true;
 }
 
 // Create and configure interfaces and channels as per given string
@@ -180,22 +110,6 @@ bool Manager::parseConfig(const String& config)
     return true;
 }
 
-// Write the given config to eeprom for future use
-void Manager::saveConfig(const String& config)
-{
-    Serial.print("Starting save: ");
-    if(config.length() < BLOCK_SIZE)
-    {
-        Serial.print(config);
-        EEPROM.writeString(CONFIG_ADDRESS, config);
-        EEPROM.commit();
-
-        String readBack = EEPROM.readString(CONFIG_ADDRESS);
-        LOG("Saved config ");
-        LOGA(readBack);
-    }
-}
-*/
 
 // Load and configure the required Interfaces
 void Manager::loadInterfaces(JsonArray interfaceList)

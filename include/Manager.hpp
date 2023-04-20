@@ -15,10 +15,12 @@
 #include <EEPROM.h>
 #include "logging.h"
 
+#include "U8x8lib.h"
+
 // list all the interfaces that should be used
 #include "SerialInterface.hpp"
 #include "GpioInterface.hpp"
-#include "ScreenInterface.hpp"
+//#include "ScreenInterface.hpp"
 
 namespace loom
 {
@@ -27,19 +29,29 @@ namespace loom
     public:
         /// @brief Get configuration and set up interfaces and channels accordingly
         /// @param config string containing the default config
-        void setup(const String& defaultConfig);
+        void setup();
 
         /// @brief Check each Interface to see if it received any updates
         void mainLoop();
 
     private:
+        void loadConfig();
+        bool getConfigUpdate(String& config);
+        bool loadLocalConfig(String& config);
+        bool writeMemory(const String& data);
+        void parseConfig(String& config);
+
+
+        const int CFG_ADDRESS = 0;
+
+/*
+
         /// @brief Check if there is a new configuration available, load if so
         /// @return was a new configuration loaded
         bool loadNewConfig();
 
         /// @brief Initialize and configure Interfaces and channels from saved configuration file
-        /// @param config String containing the configuration
-        void useExistingConfig(const String& config);
+        void useExistingConfig();
 
         /// @brief Create and configure interfaces and channels as per given string
         /// @param config string containing settings
@@ -49,7 +61,7 @@ namespace loom
         /// @brief Write the given config to eeprom for future use
         /// @param config string to be saved
         void saveConfig(const String& config);
-
+*/
         /// @brief Load and configure the required Interfaces
         /// @param interfaceList List of all the required Interfaces and their settings
         void loadInterfaces(JsonArray interfaceList);
@@ -70,6 +82,8 @@ namespace loom
         std::vector<Interface*> interfaces;
         std::vector<OutputChannel*> outputs;
 
+        const unsigned int BLOCK_SIZE = 500;
+        const unsigned int CONFIG_ADDRESS = 0;
     };
 }
 

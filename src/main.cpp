@@ -14,7 +14,7 @@ void setup() {
   LOG("Program started");
 
   //manager.loadConfig(jsonConfig);
-  manager.setup(jsonConfig);
+  manager.setup();
 }
 
 void loop() {

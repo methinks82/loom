@@ -10,7 +10,7 @@
 
 
 char jsonConfig[] = 
-"{\"interfaces\":["
+"{\"id\":\"localString\",\"interfaces\":["
     "{\"class\":\"SerialInterface\", \"id\":\"serial\",\"outputs\":[" 
         "{\"id\":\"tx\"}"
     "],\"inputs\":["

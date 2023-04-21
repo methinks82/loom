@@ -9,11 +9,19 @@
 
 #include "Manager.hpp"
 
+
+U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(15, 4, 16); // configure screen
+
 using namespace loom;
 
 // Get configuration and set up interfaces and channels accordingly
 void Manager::setup()
 {
+    u8x8.begin();
+    u8x8.setFont(u8x8_font_chroma48medium8_r);
+    u8x8.clear();
+    u8x8.drawString(0,0, "Start");
+
     loadConfig();
 }
 
@@ -29,33 +37,39 @@ void Manager::mainLoop()
 // get the valid coniguration file and set up the program accordingly
 void Manager::loadConfig()
 {
+    //u8x8.drawString(0,0,"Loading");
     EEPROM.begin(BLOCK_SIZE);
 
     String config;
-    if(!getConfigUpdate(config))
+    if(getConfigUpdate(config))
     {
-        if(!loadLocalConfig(config))
-        {
-        LOG("Config not found");
-        }
+        parseConfig(config);     
     }
-    // TODO: change condition to parse config
-    parseConfig(config);
+    else if(loadLocalConfig(config))
+    {
+        parseConfig(config);
+    }
+    else
+    {
+        LOG("Config not found");
+    }
 }
 
 // Check if there is a new configuration available, load if so
 bool Manager::getConfigUpdate(String& config)
 {  
+    u8x8.drawString(0,0,"Waiting for update");
     const char REQUEST_STRING[] = "CFG";
     
     Serial.println(); // make sure our request is on it's own line
     Serial.println(REQUEST_STRING);
-    delay(500); // give host a chance to respond
+    delay(800); // give host a chance to respond
     if( Serial.available() > 0) // host sent response
     {
         // get data from host
         String rx = Serial.readString();
         Serial.println(rx);
+        u8x8.drawString(0,1,rx.c_str());
         config = rx;
 
         // save config to non-volotile memory
@@ -69,11 +83,17 @@ bool Manager::getConfigUpdate(String& config)
 // read the configuration file that is stored in memory
 bool Manager::loadLocalConfig(String& config)
 { 
+    u8x8.clear();
+    u8x8.drawString(0,0,"Load saved config");
     config = EEPROM.readString(CONFIG_ADDRESS);
+    u8x8.drawString(0,1, config.c_str());
+  
     if(config.length() == 0) // empty string, not loaded
     {
+        u8x8.drawString(0,2, "Invalid");
         return false;
     }
+    u8x8.drawString(0,2, "Valid");
     return true;
 }
 
@@ -100,8 +120,6 @@ bool Manager::parseConfig(const String& config)
     }
 
     String id = doc["id"];
-    LOG("Loading config ");
-    LOGA(id);
 
     JsonArray interfaces = doc["interfaces"];
 
@@ -119,33 +137,9 @@ void Manager::loadInterfaces(JsonArray interfaceList)
         String id = i["id"];
         String interfaceClass = i["class"];
 
-        LOG(F("\nInterface <"));
-        LOGA(interfaceClass);
-        LOGA(F("> "));
-        LOGA(id);
-        LOG("--------");
+        Interface * newInterface = InterfaceRegistry::getInterface(interfaceClass);
 
-        Interface * newInterface;
-
-        // TODO: automate the loading of interfaces
-        
-        // check for each type of interface that is being used
-        if(interfaceClass == "SerialInterface")
-        {
-            LOG(F("Loading Serial Interface"));
-            newInterface = new SerialInterface;
-        } 
-        else if(interfaceClass == "GpioInterface")
-        {
-            LOG(F("Loading GPIO Interface"));
-            newInterface = new GpioInterface;
-        }
-        else if(interfaceClass == "ScreenInterface")
-        {
-            LOG(F("Loading Screen Interface"));
-            newInterface = new ScreenInterface;
-        }
-        else // no valid interface found
+        if (newInterface == nullptr) // no valid interface found
         {
             LOG("Unknown interface: ");
             LOGA(interfaceClass);
@@ -154,8 +148,7 @@ void Manager::loadInterfaces(JsonArray interfaceList)
         newInterface->id = id;
         loadOutputs(i["outputs"], newInterface);
         interfaces.push_back(newInterface);
-    }
-    
+    }    
 }
 
 // Create and configure output channels
@@ -164,9 +157,6 @@ void Manager::loadOutputs(JsonArray outputList, Interface* interface)
     for(JsonObject outputConfig : outputList)
     {
         String id = outputConfig["id"];
-
-        LOG("- Output ");
-        LOGA(id);
 
         OutputChannel * output = interface->createOutput(outputConfig);
         if(output != nullptr)
@@ -184,9 +174,6 @@ void Manager::loadInputs(JsonArray interfaceList)
     for(JsonObject interfaceInfo : interfaceList)
     {
         String interfaceId = interfaceInfo["id"];
-        LOG(F("\nInputs from "));
-        LOGA(interfaceId);
-        LOG(F("-------"));
 
         // find the matching interface object
         for(Interface* interface : interfaces)
@@ -198,14 +185,11 @@ void Manager::loadInputs(JsonArray interfaceList)
                 for(JsonObject inputInfo : inputs)
                 {
                     String inputId = inputInfo["id"];
-                    LOG(inputId);
+                    
                     interface->createInput(inputInfo);
 
                     // once th input is created, we link it to any listening outputs
                     JsonArray listenerList = inputInfo["outputs"];
-                    LOGA(F(" ("));
-                    LOGA(listenerList.size());
-                    LOGA(F(" listeners)"));
 
                     // cycle through each listener in the list
                     createLinks(interface, inputInfo);
@@ -225,8 +209,6 @@ void Manager::createLinks(Interface* interface, JsonObject inputInfo)
 
     for(String outputId : outputList)
     {
-        LOG(F("- "));
-        LOGA(outputId);
         //find the instance
         for(OutputChannel* output : outputs)
         {

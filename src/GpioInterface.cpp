@@ -85,3 +85,5 @@ void GpioInterface::checkUpdate()
         i->update();
     }
 }
+
+loom::InterfaceFactory<loom::GpioInterface>gpio("GpioInterface");

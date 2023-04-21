@@ -13,6 +13,7 @@
 #include <vector>
 #include <Arduino.h>
 #include "Interface.hpp"
+#include "InterfaceRegistry.hpp"
 
 namespace loom
 {

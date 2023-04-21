@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "Manager.hpp"
-#include "data.hpp"
 #include "logging.h"
 
 using namespace loom;

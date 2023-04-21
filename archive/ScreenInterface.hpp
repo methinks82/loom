@@ -14,6 +14,7 @@
 
 #include <U8x8lib.h>
 #include "Interface.hpp"
+#include "InterfaceRegistry.hpp"
 
 namespace loom
 {

@@ -1,0 +1,41 @@
+{
+    "interfaces": [
+      {
+        "class": "SerialInterface",
+        "id": "serial",
+        "msg": "foo",
+        "outputs": [
+          {
+            "id": "tx"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "rx",
+            "outputs": [
+              "light"
+            ]
+          }
+        ]
+      },
+      {
+        "class": "GpioInterface",
+        "id": "gpio",
+        "outputs": [
+          {
+            "id": "light",
+            "pin": 5
+          }
+        ], "inputs":[
+          {
+            "id":"btn",
+            "pin": 12,
+            "outputs":[
+              "tx"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  

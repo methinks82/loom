@@ -40,3 +40,6 @@ OutputChannel* ScreenInterface::createOutput(JsonObject params)
     ScreenOutput* output = new ScreenOutput;
     return output;
 }
+
+
+loom::InterfaceFactory<loom::ScreenInterface>screen("ScreenInterface");

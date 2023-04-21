@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "Interface.hpp"
+#include "InterfaceRegistry.hpp"
 
 namespace loom
 {
@@ -81,7 +82,6 @@ namespace loom
                 }
             }
         }
-
 
     private:
         std::vector<OutputChannel*> outputs;

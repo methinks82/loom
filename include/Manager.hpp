@@ -14,11 +14,14 @@
 #include <vector>
 #include <EEPROM.h>
 #include "logging.h"
+#include "InterfaceRegistry.hpp"
+
+#include <U8x8lib.h>
 
 // list all the interfaces that should be used
-#include "SerialInterface.hpp"
-#include "GpioInterface.hpp"
-#include "ScreenInterface.hpp"
+//#include "SerialInterface.hpp"
+//#include "GpioInterface.hpp"
+//#include "ScreenInterface.hpp"
 
 namespace loom
 {

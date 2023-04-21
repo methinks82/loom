@@ -53,7 +53,6 @@ void Manager::loadConfig()
     {
         LOG("Config not found");
     }
-    // TODO: change condition to parse config
 }
 
 // Check if there is a new configuration available, load if so
@@ -88,8 +87,7 @@ bool Manager::loadLocalConfig(String& config)
     u8x8.drawString(0,0,"Load saved config");
     config = EEPROM.readString(CONFIG_ADDRESS);
     u8x8.drawString(0,1, config.c_str());
-    //LOG("Local:");
-    //LOGA(config);
+  
     if(config.length() == 0) // empty string, not loaded
     {
         u8x8.drawString(0,2, "Invalid");
@@ -122,8 +120,6 @@ bool Manager::parseConfig(const String& config)
     }
 
     String id = doc["id"];
-    LOG("Parsing config ");
-    LOGA(id);
 
     JsonArray interfaces = doc["interfaces"];
 
@@ -141,42 +137,11 @@ void Manager::loadInterfaces(JsonArray interfaceList)
         String id = i["id"];
         String interfaceClass = i["class"];
 
-        LOG(F("\nInterface <"));
-        LOGA(interfaceClass);
-        LOGA(F("> "));
-        LOGA(id);
-        LOG("--------");
-
         Interface * newInterface = InterfaceRegistry::getInterface(interfaceClass);
 
-/*
-        // TODO: automate the loading of interfaces
-        
-        // check for each type of interface that is being used
-        if(interfaceClass == "SerialInterface")
-        {
-            LOG(F("Loading Serial Interface"));
-            newInterface = new SerialInterface;
-        } 
-        else if(interfaceClass == "GpioInterface")
-        {
-            LOG(F("Loading GPIO Interface"));
-            newInterface = new GpioInterface;
-        }
-        else if(interfaceClass == "ScreenInterface")
-        {
-            LOG(F("Loading Screen Interface"));
-            newInterface = new ScreenInterface;
-        }
-        */
         if (newInterface == nullptr) // no valid interface found
         {
             LOG("Unknown interface: ");
-            LOGA(interfaceClass);
-        }
-        else
-        {
-            LOG("Loading Int:");
             LOGA(interfaceClass);
         }
         newInterface->init(i);
@@ -192,9 +157,6 @@ void Manager::loadOutputs(JsonArray outputList, Interface* interface)
     for(JsonObject outputConfig : outputList)
     {
         String id = outputConfig["id"];
-
-        LOG("- Output ");
-        LOGA(id);
 
         OutputChannel * output = interface->createOutput(outputConfig);
         if(output != nullptr)
@@ -212,9 +174,6 @@ void Manager::loadInputs(JsonArray interfaceList)
     for(JsonObject interfaceInfo : interfaceList)
     {
         String interfaceId = interfaceInfo["id"];
-        LOG(F("\nInputs from "));
-        LOGA(interfaceId);
-        LOG(F("-------"));
 
         // find the matching interface object
         for(Interface* interface : interfaces)
@@ -226,14 +185,11 @@ void Manager::loadInputs(JsonArray interfaceList)
                 for(JsonObject inputInfo : inputs)
                 {
                     String inputId = inputInfo["id"];
-                    LOG(inputId);
+                    
                     interface->createInput(inputInfo);
 
                     // once th input is created, we link it to any listening outputs
                     JsonArray listenerList = inputInfo["outputs"];
-                    LOGA(F(" ("));
-                    LOGA(listenerList.size());
-                    LOGA(F(" listeners)"));
 
                     // cycle through each listener in the list
                     createLinks(interface, inputInfo);
@@ -253,8 +209,6 @@ void Manager::createLinks(Interface* interface, JsonObject inputInfo)
 
     for(String outputId : outputList)
     {
-        LOG(F("- "));
-        LOGA(outputId);
         //find the instance
         for(OutputChannel* output : outputs)
         {

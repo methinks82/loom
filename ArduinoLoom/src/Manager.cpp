@@ -205,7 +205,7 @@ void Manager::createLinks(Interface* interface, JsonObject inputInfo)
 {
     // for each output
     String inputId = inputInfo["id"];
-    JsonArray outputList = inputInfo["outputs"];
+    JsonArray outputList = inputInfo["links"];
 
     for(String outputId : outputList)
     {

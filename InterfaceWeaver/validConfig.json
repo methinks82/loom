@@ -12,8 +12,8 @@
         "inputs": [
           {
             "id": "rx",
-            "outputs": [
-              "light"
+            "links": [
+              "tx"
             ]
           }
         ]
@@ -30,8 +30,8 @@
           {
             "id":"btn",
             "pin": 12,
-            "outputs":[
-              "tx"
+            "links":[
+              "light"
             ]
           }
         ]

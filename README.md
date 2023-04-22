@@ -54,7 +54,7 @@ In the following example the Arduino listens for data on the serial port, uses t
       "inputs": [
         {
           "id": "rx",
-          "bind": [
+          "links": [
             "led",
             "tx"
           ]
@@ -89,7 +89,7 @@ Outputs
 
 Inputs
 - **id:** What to refer to this channel as
-- **bind:** A list of the output channels to send data to
+- **links:** A list of the output channels to send data to
 - **[Optional Parameters]** Other values that this Input needs to configure
 
 

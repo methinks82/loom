@@ -86,4 +86,4 @@ void GpioInterface::checkUpdate()
     }
 }
 
-loom::InterfaceFactory<loom::GpioInterface>gpio("GpioInterface");
+loom::InterfaceRegistration<loom::GpioInterface>gpio("GpioInterface");

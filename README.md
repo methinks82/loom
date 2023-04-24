@@ -106,3 +106,48 @@ AnalogInterface | Analog read and write on GPIO pins |||Planned
 ServoInterface | Send pwm signals via pin to set position of motor ||Position| Planned
 StepperInterface | Send sequence of signals to move motor |[position]|position/speed|Planned
 
+
+## How to create a new Interface
+While loom comes with a number of interfaces, you can easily create your own custom interfaces
+as well in order to add support for new devices or extra functionality. All it takes is some basic
+C++ knowlege.
+
+> **Naming Interfaces**  
+The convention is to come up with a short one to two word name that describes the function
+of the interface (Servo, Serial, Thermometer, etc.). This name should be specific (if it's for a stepper call it stepper, not motor) and unique. This will be used as the ID of the interface class. The name of the class itself will be the name of the interface followed by the word interface, such as StepperInterface.
+
+For this example we will create an interface called Widget.
+
+1. **Add two files to the project**  
+Create a new header (.h or .hpp) and a declaration file (.cpp). Call these WidgetInterface.hpp and WidgetInterface.cpp
+    >The self-registration function in step 4 MUST be called from a .cpp file to work, otherwise the
+compiler will not call it correctly!  
+2. **Create your new Interface Class**  
+The class must inherit the Interface class (found in Interface.hpp), which means implementing the following functions:
+    - init - Takes and use any configuration parameters that apply to this interface
+    - createOutput - Create a point to send data if outputs are required (See next step). If this interface doesn't have
+        outputs, return nullptr
+    - createInput - Tell the interface that a new input channel is required.
+    - linkChannels - Set up what outputs get data from the specified input channel
+    - checkUpdate - Gets called during the main loop. This is where we check if there's any new data to send out, or if the input channels need to do anything.  
+
+3. **Create Output Channels**  
+If the interface sends data OUT of the Arduino, then you need to create one or more Output Channel classes. These classes take a piece of data and do something, such as sending it to a GPIO pin or a serial port.
+The new output channel inherits the OutputChannel class and implements one function:
+    - call - Takes a piece of data from an Input Channel and does something with it
+
+4. **Register the new Interface**  
+Loom provides a self-registration mechanism so there's no need to modify any existing code to add your new interface.
+    To register the interface simply add the following line to a cpp file in your project (To keep things clean it is recommended that you create a .cpp file for each Interface)
+
+    loom:InterfaceRegistration<***InterfaceClass***> **name** ( **"InterfaceName"** );  
+    Notice that there are 3 values to fill in:
+    - InterfaceClass - The class to register
+    - name - A unique name for the global variable that will do the registration for you
+    - "InterfaceName" - The name (id) by which the configuration file will find the interface  
+    So registering our example Widget interface would look like this:
+    ``` cpp
+    loom:InterfaceRegistration<WidgetInterface> widget("WidgetInterface");
+    ```
+
+After compiling and uploading the project to the Arduino, you can now create new Widget interfaces from the config

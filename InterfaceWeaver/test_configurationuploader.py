@@ -44,6 +44,12 @@ def test_getMessage():
     connection.readline = multiCalls
     assert cf.getMessage(connection, val, 1) == True
 
+def test_hashMessage():
+    msg = "This is a test message. I wonder how it will hash? Hopefully well."
+
+    assert cf.hashMessage(msg) == 5984
+    # TODO: Test overflow
+
 
 def test_transmitData():
 

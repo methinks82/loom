@@ -1,25 +1,25 @@
 /**
  * loom/InputChannel.hpp
  * 
- * Receives input from Interface and sends it
+ * Generic Input Channel, an optional way to create a class that receives input from Interface and sends it
  * to any listening chanels
  * 
  * @author Alex Schlieck
  * @date 2023-04-07
 */
 
+
+
 #ifndef LOOM_INPUTCHANNEL_HPP
 #define LOOM_INPUTCHANNEL_HPP
 
-#include <Arduino.h> // temp, serial for debugging
-
 #include <vector>
-#include "OutputChannel.hpp"
+#include "Interface.hpp"
 
 namespace loom
 {
-    /// @brief Allows the Arduino to recieve data from devices
-    /// and forward it to the proper output devices
+    /// @brief Optional implementation of a class that recieves data from devices
+    /// and forwards it to the proper output devices
     class InputChannel
     {
     public:

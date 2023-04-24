@@ -92,12 +92,12 @@ namespace loom
 	/// @brief Create and register a factory for a specific type of Interface
 	/// @tparam InterfaceClass the type of interface to create with the factory
 	template <class InterfaceClass>
-	class InterfaceFactory : public BaseInterfaceFactory
+	class InterfaceRegistration : public BaseInterfaceFactory
 	{
 	public:
 		/// @brief Constructor, registers factory on creation
 		/// @param id type of interface to create with the class
-		InterfaceFactory(String classId)
+		InterfaceRegistration(String classId)
 		{
 			BaseInterfaceFactory::classId = classId;
 			//InterfaceRegistry::instance().addFactory(this);

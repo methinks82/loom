@@ -68,8 +68,34 @@ bool Manager::getConfigUpdate(String& config)
     {
         // get data from host
         String rx = Serial.readString();
-        Serial.println(rx);
-        u8x8.drawString(0,1,rx.c_str());
+        //uint8_t recievedHash = Serial.readBytes();
+        //String hash = Serial.readString();
+
+        
+        
+        // check message validity
+        uint16_t calcHash = hashMessage(rx);
+          
+        u8x8.drawString(0,1,"Recv Hash:");
+        //u8x8.drawString(11, 1, hash.c_str());
+        u8x8.drawString(0,2,"Calc Hash:");
+        u8x8.drawString(11, 2, std::to_string(calcHash).c_str());
+        u8x8.drawString(0,0,rx.c_str());
+
+        //Serial.println(rx); 
+
+/*
+        uint16_t recievedHash = 0;
+        recievedHash = Serial.read();
+        recievedHash = recievedHash<<8;
+        recievedHash += Serial.read();
+
+        u8x8.drawString(0,0,rx.c_str());
+        u8x8.drawString(0,2,"Calc Hash:");
+        u8x8.drawString(11, 2, std::to_string(calcHash).c_str());
+        u8x8.drawString(0,1,"Recv Hash:");
+        u8x8.drawString(11, 1, std::to_string(recievedHash).c_str());
+*/
         config = rx;
 
         // save config to non-volotile memory
@@ -97,6 +123,17 @@ bool Manager::loadLocalConfig(String& config)
     return true;
 }
 
+// Create a simple numeric hash to represent the string. Used to verify integrity
+uint16_t Manager::hashMessage(String& msg)
+{
+    uint16_t hash = 0;
+    for(int i = 0; i < msg.length(); i++)
+    {
+        hash += (int)msg[i];
+    }
+    return hash;
+}
+
 // Write the given config to eeprom for future use
 bool Manager::writeMemory(const String& data)
 {
@@ -113,7 +150,7 @@ bool Manager::parseConfig(const String& config)
     DeserializationError error = deserializeJson(doc, config);
     if(error)
     { 
-        LOG(F("Unable to load config: "));
+        LOG(F("Unable to configure board: "));
         Serial.println(error.f_str());
         Serial.println(config);
         return false;

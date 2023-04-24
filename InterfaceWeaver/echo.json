@@ -1,0 +1,21 @@
+{
+    "interfaces": [
+        {
+          "class": "SerialInterface",
+          "id": "serial",
+          "outputs": [
+            {
+              "id": "tx"
+            }
+          ],
+          "inputs": [
+            {
+              "id": "rx",
+              "links": [
+                "tx"
+              ]
+            }
+          ]
+        }
+    ]
+}

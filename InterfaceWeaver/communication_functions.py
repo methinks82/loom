@@ -1,8 +1,9 @@
-import serial
-import time
-import asyncio
-import json_minify
-import json
+import serial       # Communicating with board
+import time         # for setting timeouts
+import asyncio      # Threading for monitor
+import json_minify  # compress json
+import json         # validate json
+import numpy as np  #used for generating hash
 
 
 # send a signal that will cause the device to reset
@@ -48,26 +49,56 @@ def getMessage(connection: serial.Serial, msg, timeout):
             return True
     return False
 
+def hashMessage(message):
+    hash:np.uint8 = 0
+    for c in message:
+        hash += ord(c)
+    return hash
+
 
 # send a string to a device if requested
 def uploadRequestedData(connection: serial.Serial, requestString, data):
     print("Uploading config: " + data)
- 
+
     print("Resetting board")
     sendReset(connection)
 
     if getMessage(connection, requestString, 3):
         print("Request recieved")
-        
-        print("TX: " + data)
         connection.write(data.encode())
+        time.sleep(0.5)
+        hash = "\0 42\0"
+        connection.write(hash.encode())
 
-        if getMessage(connection, data, 3):
-            print("Payload verified")
-            return True
-        else:
-            print("Upload failed")
-            raise Exception("Upload not verified")
+        print("TX: " + data)
+
+
+        hash:np.uint8 = hashMessage(data)
+        print("Hash: " + str(hash))
+
+
+
+        # send the hash
+        #hashBytes:np.uint8 = []
+        #hashBytes[1] = hash & 0xFF
+        #hashBytes[0] = (hash >> 8) & 0xFF
+        #bytes[1] = (hash >> 8) & 0xFF
+        #bytes[0] = hash & 0xFF
+
+        ##connection.write( hash & 0xFF )        
+        #connection.write( (hash >> 8) & 0xFF )
+
+
+        #connection.write(bytes[0])
+        #connection.write(bytes[1])
+
+        #if getMessage(connection, data, 3):
+        #    print("Payload verified")
+        #    return True
+        #else:
+        #    print("Upload failed")
+        #    raise Exception("Upload not verified")
+        
     else:
         print("Request not recieved")
 

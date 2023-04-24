@@ -1,3 +1,3 @@
 #include "SerialInterface.hpp"
 
-loom::InterfaceFactory<loom::SerialInterface>serial("SerialInterface");
+loom::InterfaceRegistration<loom::SerialInterface>serial("SerialInterface");

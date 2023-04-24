@@ -43,6 +43,11 @@ namespace loom
         /// @return 
         bool loadLocalConfig(String& config);
 
+        /// @brief Create a simple numeric hash to represent the string. Used to verify integrity
+        /// This will just be adding the values of each character. We don't care if it overflows
+        /// @param msg String to be hashed
+        /// @return 16bit unsigned number generated from the string
+        uint16_t hashMessage(String& msg);
 
         /// @brief Write the given config to eeprom for future use
         /// @param config string to be saved        
